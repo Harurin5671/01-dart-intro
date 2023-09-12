@@ -1,23 +1,66 @@
+// import 'package:animate_do/animate_do.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-// import 'package:toktik/presentation/providers/discover_provider.dart';
-import 'package:toktik/presentation/widgets/shared/video_scrollable_view.dart';
+// import 'package:toktik/config/helpers/human_formats.dart';
+import 'package:toktik/domain/entities/video_post.dart';
 
-import '../../providers/discover_providers.dart';
+import '../../../config/helpers/humans_formats.dart';
 
-class DiscoverScreen extends StatelessWidget {
-  const DiscoverScreen({super.key});
+class VideoButtons extends StatelessWidget {
+  final VideoPost video;
+
+  const VideoButtons({super.key, required this.video});
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _CustomIconButton(
+          value: video.likes,
+          iconColor: Colors.red,
+          iconData: Icons.favorite,
+        ),
+        const SizedBox(height: 20),
+        _CustomIconButton(
+            value: video.views, iconData: Icons.remove_red_eye_outlined),
+        const SizedBox(height: 20),
+        // SpinPerfect(
+        //   infinite: true,
+        //   duration: const Duration( seconds: 5),
+        //   child: const _CustomIconButton( value: 0, iconData: Icons.play_circle_outline )
+        // ),
+        SpinPerfect(
+          infinite: true,
+          duration: const Duration(seconds: 5),
+          child: const _CustomIconButton(value: 0, iconData: Icons.play_circle_outlined),
+        ),
+      ],
+    );
+  }
+}
 
-    final discoverProvider = context.watch<DiscoverProvider>();
+class _CustomIconButton extends StatelessWidget {
+  final int value;
+  final IconData iconData;
+  final Color? color;
 
+  const _CustomIconButton(
+      {required this.value, required this.iconData, iconColor})
+      : color = iconColor ?? Colors.white;
 
-    return Scaffold(
-      body: discoverProvider.initialLoading
-        ? const Center( child: CircularProgressIndicator( strokeWidth: 2 ) )
-        : VideoScrollableView(videos: discoverProvider.videos )
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              iconData,
+              color: color,
+              size: 30,
+            )),
+        if (value > 0) Text(HumanFormats.humanReadbleNumber(value.toDouble())),
+      ],
     );
   }
 }
